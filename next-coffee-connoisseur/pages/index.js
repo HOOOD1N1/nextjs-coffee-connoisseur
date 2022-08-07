@@ -1,14 +1,14 @@
-import Head from 'next/head'
-import Image from 'next/image'
-import Banner from '../components/banner'
-import styles from '../styles/Home.module.css'
+import Head from "next/head";
+import Image from "next/image";
+import Banner from "../components/banner";
+import Card from "../components/card";
+import styles from "../styles/Home.module.css";
+import coffeeStoresData from "../data/coffee-stores.json";
 
-export default function Home() {
-
-
+export default function Home(props) {
   const handleOnBannerBtnClick = () => {
-    console.log('works');
-  }
+    console.log("works");
+  };
 
   return (
     <div className={styles.container}>
@@ -19,15 +19,57 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <Banner buttonText="View Stores Nearby" handleOnBannerBtnClick={handleOnBannerBtnClick}/>
+        <Banner
+          buttonText="View Stores Nearby"
+          handleOnBannerBtnClick={handleOnBannerBtnClick}
+        />
         <div className={styles.heroImage}>
           <Image src="/static/hero-image.png" width={700} height={400} />
         </div>
+        {props.coffeeStores.length > 0 && (
+          <>
+            <h2 className={styles.heading2}>Toronto Coffee Stores</h2>
+            <div className="styles.cardLayout">
+              {props.coffeeStores.map((coffeeStore) => {
+                return (
+                  <Card
+                    name={coffeeStore.name}
+                    imgUrl={coffeeStore.imgUrl}
+                    href={`/coffee-store/${coffeeStore.id}`}
+                    className={styles.card}
+                    key={coffeeStore.id}
+                  />
+                );
+              })}
+            </div>
+          </>
+        )}
       </main>
 
-      <footer className={styles.footer}>
-        
-      </footer>
+      <footer className={styles.footer}></footer>
     </div>
-  )
+  );
+}
+
+export async function getStaticProps(context) {
+  // if (
+  //   !process.env.NEXT_PUBLIC_FOURSQUARE_API_KEY &&
+  //   !process.env.AIRTABLE_API_KEY &&
+  //   !process.env.AIRTABLE_BASE_KEY &&
+  //   !process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY
+  // ) {
+  //   return {
+  //     redirect: {
+  //       destination: "/problem",
+  //       permanent: false,
+  //     },
+  //   };
+  // }
+  // const coffeeStores = await fetchCoffeeStores();
+
+  return {
+    props: {
+      coffeeStores: coffeeStoresData,
+    }, // will be passed to the page component as props
+  };
 }
