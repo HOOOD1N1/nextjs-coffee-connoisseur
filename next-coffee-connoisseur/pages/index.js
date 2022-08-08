@@ -34,7 +34,7 @@ export default function Home(props) {
                 return (
                   <Card
                     name={coffeeStore.name}
-                    imgUrl={coffeeStore.imgUrl}
+                    imgUrl={coffeeStore.imgUrl || ""}
                     href={`/coffee-store/${coffeeStore.id}`}
                     className={styles.card}
                     key={coffeeStore.id}
@@ -52,24 +52,26 @@ export default function Home(props) {
 }
 
 export async function getStaticProps(context) {
-  // if (
-  //   !process.env.NEXT_PUBLIC_FOURSQUARE_API_KEY &&
-  //   !process.env.AIRTABLE_API_KEY &&
-  //   !process.env.AIRTABLE_BASE_KEY &&
-  //   !process.env.NEXT_PUBLIC_UNSPLASH_ACCESS_KEY
-  // ) {
-  //   return {
-  //     redirect: {
-  //       destination: "/problem",
-  //       permanent: false,
-  //     },
-  //   };
-  // }
-  // const coffeeStores = await fetchCoffeeStores();
+
+
+  const url = 'https://api.foursquare.com/v3/places/search?ll=43.65267326999575,-79.39545615725015&query=stores&limit=6&v=20220105&limit=6"';
+  const options = {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+      Authorization: process.env.NEXT_PUBLIC_FOURSQUARE_API_KEY
+    }
+  };
+
+  const request = await fetch(url, options);
+  const data = await request.json();
+  console.log(data.results)
+
 
   return {
     props: {
-      coffeeStores: coffeeStoresData,
+      coffeeStores:   data.results
+      
     }, // will be passed to the page component as props
   };
 }
